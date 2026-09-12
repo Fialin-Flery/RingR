@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "129348034395",
+    "project_id": "ringr-88e13",
+    "storage_bucket": "ringr-88e13.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129348034395:android:231bbabbe23a36371fc47e",
+        "android_client_info": {
+          "package_name": "com.ringr.ringr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "129348034395-kn0fm0mulm1bjlok01cm8etr7e2ktg5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ringr.ringr",
+            "certificate_hash": "f1f1d2194f413d17864dc7710b429a89f8dd552a"
+          }
+        },
+        {
+          "client_id": "129348034395-q4uaocgamf3ugnqe02al7bjnaeo12aqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBEr0RdxjC0LbC9uaBORJz6vqcVztwDtY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "129348034395-q4uaocgamf3ugnqe02al7bjnaeo12aqk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "129348034395-akflgignu9l5kjrgj3e50npf3lh0a1hp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ringr.ringr"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
