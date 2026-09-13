@@ -57,6 +57,10 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+  // ============================================================
+  // GOOGLE SIGN IN
+  // ============================================================
+
   Future<void> _signInWithGoogle() async {
     if (_isLoading) return;
 
@@ -65,11 +69,15 @@ class _LoginPageState extends State<LoginPage>
     });
 
     try {
-      // AuthService methods are STATIC.
       final result = await AuthService.signInWithGoogle();
 
-      if (!mounted || result == null) return;
-      if (result != null) await ZegoCallService.instance.initializeForCurrentUser();
+      if (!mounted || result == null) {
+        return;
+      }
+
+      // Initialize ZEGOCLOUD after Firebase authentication.
+      await ZegoCallService.instance
+          .initializeForCurrentUser();
 
       final user = result.user;
 
@@ -80,9 +88,15 @@ class _LoginPageState extends State<LoginPage>
       }
 
       final profileExists =
-      await _userService.userProfileExists(user.uid);
+      await _userService.userProfileExists(
+        user.uid,
+      );
 
       if (!mounted) return;
+
+      // ========================================================
+      // EXISTING USER
+      // ========================================================
 
       if (profileExists) {
         Navigator.of(context).pushReplacement(
@@ -90,10 +104,16 @@ class _LoginPageState extends State<LoginPage>
             builder: (_) => const HomePage(),
           ),
         );
-      } else {
+      }
+
+      // ========================================================
+      // NEW USER
+      // ========================================================
+
+      else {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => const ProfilePage(),
+            builder: (_) => const RegistrationPage(),
           ),
         );
       }
@@ -105,12 +125,12 @@ class _LoginPageState extends State<LoginPage>
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
+        const SnackBar(
+          content: Text(
             'Google sign-in failed. Please try again.',
           ),
           behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(16),
+          margin: EdgeInsets.all(16),
         ),
       );
     } finally {
@@ -121,6 +141,10 @@ class _LoginPageState extends State<LoginPage>
       }
     }
   }
+
+  // ============================================================
+  // BUILD
+  // ============================================================
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +166,10 @@ class _LoginPageState extends State<LoginPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // ---------------- LOGO ----------------
+                    // ==================================================
+                    // LOGO
+                    // ==================================================
+
                     Image.asset(
                       'assets/images/ringr_logo_cropped.png',
                       width: 190,
@@ -151,7 +178,10 @@ class _LoginPageState extends State<LoginPage>
 
                     const SizedBox(height: 48),
 
-                    // ---------------- TITLE ----------------
+                    // ==================================================
+                    // TITLE
+                    // ==================================================
+
                     Text(
                       'Welcome to Ringr',
                       textAlign: TextAlign.center,
@@ -173,7 +203,10 @@ class _LoginPageState extends State<LoginPage>
 
                     const SizedBox(height: 42),
 
-                    // ---------------- GOOGLE BUTTON ----------------
+                    // ==================================================
+                    // GOOGLE BUTTON
+                    // ==================================================
+
                     SizedBox(
                       width: double.infinity,
                       height: 56,
@@ -198,8 +231,7 @@ class _LoginPageState extends State<LoginPage>
                           ),
                           elevation: 0,
                         ),
-                        child:
-                        _isLoading
+                        child: _isLoading
                             ? SizedBox(
                           width: 22,
                           height: 22,
@@ -212,8 +244,7 @@ class _LoginPageState extends State<LoginPage>
                         )
                             : Row(
                           mainAxisAlignment:
-                          MainAxisAlignment
-                              .center,
+                          MainAxisAlignment.center,
                           children: [
                             Image.asset(
                               'assets/images/google.png',
@@ -227,8 +258,7 @@ class _LoginPageState extends State<LoginPage>
 
                             Text(
                               'Continue with Google',
-                              style:
-                              theme
+                              style: theme
                                   .textTheme
                                   .titleMedium
                                   ?.copyWith(
@@ -243,7 +273,10 @@ class _LoginPageState extends State<LoginPage>
 
                     const SizedBox(height: 28),
 
-                    // ---------------- FOOTER ----------------
+                    // ==================================================
+                    // FOOTER
+                    // ==================================================
+
                     Text(
                       'Your calls, all in one place.',
                       textAlign: TextAlign.center,

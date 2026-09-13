@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/contact_model.dart';
 import '../../services/contact_service.dart';
 import 'contact_tile.dart';
+import '../calls/group_call_page.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -12,11 +13,13 @@ class ContactsPage extends StatefulWidget {
       _ContactsPageState();
 }
 
-class _ContactsPageState extends State<ContactsPage> {
+class _ContactsPageState
+    extends State<ContactsPage> {
   final ContactService _contactService =
       ContactService.instance;
 
-  final TextEditingController _searchController =
+  final TextEditingController
+  _searchController =
   TextEditingController();
 
   List<ContactModel> _contacts = [];
@@ -30,18 +33,18 @@ class _ContactsPageState extends State<ContactsPage> {
     super.initState();
 
     _searchController.addListener(() {
+      if (!mounted) return;
+
       setState(() {
         _searchQuery =
-            _searchController.text.trim().toLowerCase();
+            _searchController.text
+                .trim()
+                .toLowerCase();
       });
     });
 
     _loadContacts();
   }
-
-  // ============================================================
-  // LOAD CONTACTS
-  // ============================================================
 
   Future<void> _loadContacts() async {
     if (mounted) {
@@ -52,7 +55,8 @@ class _ContactsPageState extends State<ContactsPage> {
 
     try {
       final contacts =
-      await _contactService.getContacts();
+      await _contactService
+          .getContacts();
 
       if (!mounted) return;
 
@@ -74,11 +78,8 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
-  // ============================================================
-  // FILTER CONTACTS
-  // ============================================================
-
-  List<ContactModel> get _filteredContacts {
+  List<ContactModel>
+  get _filteredContacts {
     if (_searchQuery.isEmpty) {
       return _contacts;
     }
@@ -103,10 +104,6 @@ class _ContactsPageState extends State<ContactsPage> {
     }).toList();
   }
 
-  // ============================================================
-  // AUDIO CALL
-  // ============================================================
-
   void _startAudioCall(
       ContactModel contact) {
     ScaffoldMessenger.of(context)
@@ -119,10 +116,6 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
-  // ============================================================
-  // VIDEO CALL
-  // ============================================================
-
   void _startVideoCall(
       ContactModel contact) {
     ScaffoldMessenger.of(context)
@@ -134,10 +127,6 @@ class _ContactsPageState extends State<ContactsPage> {
       ),
     );
   }
-
-  // ============================================================
-  // INVITE
-  // ============================================================
 
   void _inviteContact(
       ContactModel contact) {
@@ -152,20 +141,27 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
+  Future<void> _openGroupCall() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            GroupCallPage(
+              contacts: _contacts,
+            ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
-  // ============================================================
-  // BUILD
-  // ============================================================
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final scheme =
+        Theme.of(context).colorScheme;
 
     final filteredContacts =
         _filteredContacts;
@@ -180,23 +176,30 @@ class _ContactsPageState extends State<ContactsPage> {
         ),
         actions: [
           IconButton(
+            tooltip: 'Group call',
+            onPressed:
+            _isLoading
+                ? null
+                : _openGroupCall,
+            icon: const Icon(
+              Icons.group_add_rounded,
+            ),
+          ),
+          IconButton(
             tooltip: 'Refresh contacts',
             onPressed:
-            _isLoading ? null : _loadContacts,
+            _isLoading
+                ? null
+                : _loadContacts,
             icon: const Icon(
               Icons.refresh_rounded,
             ),
           ),
         ],
       ),
-
       body: SafeArea(
         child: Column(
           children: [
-            // ==================================================
-            // SEARCH BAR
-            // ==================================================
-
             Padding(
               padding:
               const EdgeInsets.fromLTRB(
@@ -221,7 +224,8 @@ class _ContactsPageState extends State<ContactsPage> {
                   suffixIcon:
                   _searchQuery.isNotEmpty
                       ? IconButton(
-                    onPressed: () {
+                    onPressed:
+                        () {
                       _searchController
                           .clear();
                     },
@@ -249,10 +253,6 @@ class _ContactsPageState extends State<ContactsPage> {
               ),
             ),
 
-            // ==================================================
-            // CONTENT
-            // ==================================================
-
             Expanded(
               child: _isLoading
                   ? const Center(
@@ -271,9 +271,9 @@ class _ContactsPageState extends State<ContactsPage> {
                   children: [
                     SizedBox(
                       height:
-                      MediaQuery.of(context)
-                          .size
-                          .height *
+                      MediaQuery.of(
+                        context,
+                      ).size.height *
                           0.25,
                     ),
                     _buildEmptyState(
@@ -295,8 +295,10 @@ class _ContactsPageState extends State<ContactsPage> {
                   filteredContacts
                       .length,
                   itemBuilder:
-                      (context,
-                      index) {
+                      (
+                      context,
+                      index,
+                      ) {
                     final contact =
                     filteredContacts[
                     index];
@@ -339,10 +341,6 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
-  // ============================================================
-  // EMPTY STATE
-  // ============================================================
-
   Widget _buildEmptyState(
       BuildContext context) {
     final scheme =
@@ -364,13 +362,10 @@ class _ContactsPageState extends State<ContactsPage> {
                 : Icons.contacts_outlined,
             size: 58,
             color:
-            scheme.onSurface.withOpacity(
-              0.30,
-            ),
+            scheme.onSurface
+                .withOpacity(0.30),
           ),
-
           const SizedBox(height: 16),
-
           Text(
             hasSearch
                 ? 'No contacts found'
@@ -384,9 +379,7 @@ class _ContactsPageState extends State<ContactsPage> {
               FontWeight.w600,
             ),
           ),
-
           const SizedBox(height: 8),
-
           Text(
             hasSearch
                 ? 'Try searching with a different name, phone number or email.'
@@ -396,8 +389,8 @@ class _ContactsPageState extends State<ContactsPage> {
                 .textTheme
                 .bodyMedium
                 ?.copyWith(
-              color: scheme
-                  .onSurfaceVariant,
+              color:
+              scheme.onSurfaceVariant,
             ),
           ),
         ],
